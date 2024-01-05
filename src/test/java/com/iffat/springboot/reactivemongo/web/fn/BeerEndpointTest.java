@@ -28,6 +28,15 @@ class BeerEndpointTest {
     WebTestClient webTestClient;
 
     @Test
+    void testDeleteByIdNotFound() {
+
+        webTestClient.delete()
+                .uri(BeerRouterConfig.BEER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     @Order(999)
     void testDeleteBeer() {
         BeerDTO beerDTO = getSavedTestBeer();
@@ -39,6 +48,17 @@ class BeerEndpointTest {
     }
 
     @Test
+    void testPatchNotFound() {
+        BeerDTO beerDTO = getSavedTestBeer();
+
+        webTestClient.patch()
+                .uri(BeerRouterConfig.BEER_PATH_ID, 999)
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     void testPatchBeerFound() {
         BeerDTO beerDTO = getSavedTestBeer();
 
@@ -47,6 +67,18 @@ class BeerEndpointTest {
                 .body(Mono.just(beerDTO), BeerDTO.class)
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testUpdateByIdNotFound() {
+        BeerDTO beerDTO = getSavedTestBeer();
+        beerDTO.setBeerName("New");
+
+        webTestClient.put()
+                .uri(BeerRouterConfig.BEER_PATH_ID, 999)
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
@@ -85,6 +117,15 @@ class BeerEndpointTest {
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-type","application/json")
                 .expectBody().jsonPath("$.size()", hasSize(greaterThan(1)));
+    }
+
+    @Test
+    void testGetByIdNotFound() {
+
+        webTestClient.get()
+                .uri(BeerRouterConfig.BEER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test

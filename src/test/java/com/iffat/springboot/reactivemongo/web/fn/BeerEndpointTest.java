@@ -28,6 +28,17 @@ class BeerEndpointTest {
     WebTestClient webTestClient;
 
     @Test
+    void testPatchBeerFound() {
+        BeerDTO beerDTO = getSavedTestBeer();
+
+        webTestClient.patch()
+                .uri(BeerRouterConfig.BEER_PATH_ID, beerDTO.getId())
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
     void testUpdateBeer() {
 
         BeerDTO beerDTO = getSavedTestBeer();

@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface BeerService {
+    Mono<BeerDTO> findFirstByBeerName(String beerName);
 
     Mono<BeerDTO> saveBeer(Mono<BeerDTO> beerDTO);
 

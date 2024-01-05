@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -68,7 +69,15 @@ public class BeerHandler {
     }
 
     public Mono<ServerResponse> listBeers(ServerRequest serverRequest) {
+        Flux<BeerDTO> flux;
+
+        if (serverRequest.queryParam("beerStyle").isPresent()) {
+            flux = beerService.findByBeerStyle(serverRequest.queryParam("beerStyle").get());
+        } else {
+            flux = beerService.listBeers();
+        }
+
         return ServerResponse.ok()
-                .body(beerService.listBeers(), BeerDTO.class);
+                .body(flux, BeerDTO.class);
     }
 }

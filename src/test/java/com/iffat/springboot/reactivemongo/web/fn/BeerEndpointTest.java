@@ -59,6 +59,18 @@ class BeerEndpointTest {
     }
 
     @Test
+    void testPatchBadRequest() {
+        BeerDTO beerDTO = getSavedTestBeer();
+        beerDTO.setBeerName("");
+
+        webTestClient.patch()
+                .uri(BeerRouterConfig.BEER_PATH_ID, beerDTO.getId())
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
     void testPatchBeerFound() {
         BeerDTO beerDTO = getSavedTestBeer();
 
@@ -82,8 +94,19 @@ class BeerEndpointTest {
     }
 
     @Test
-    void testUpdateBeer() {
+    void testUpdateBadRequest() {
+        BeerDTO beerDTO = getSavedTestBeer();
+        beerDTO.setBeerName("");
 
+        webTestClient.put()
+                .uri(BeerRouterConfig.BEER_PATH_ID, beerDTO.getId())
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void testUpdateBeer() {
         BeerDTO beerDTO = getSavedTestBeer();
         beerDTO.setBeerName("New");
 
@@ -92,6 +115,18 @@ class BeerEndpointTest {
                 .body(Mono.just(beerDTO), BeerDTO.class)
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testCreateBadData() {
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        webTestClient.post()
+                .uri(BeerRouterConfig.BEER_PATH)
+                .body(Mono.just(beerDTO), BeerDTO.class)
+                .header("Content-Type", "application/json")
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
